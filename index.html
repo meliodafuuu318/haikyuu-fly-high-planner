@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haikyuu Fly High Gacha Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .banner-list {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .banner-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .banner-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .banner-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .banner-info {
+            flex: 1;
+        }
+
+        .banner-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .banner-type {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+        .type-ur {
+            background: #ffd700;
+            color: #8b4513;
+        }
+
+        .type-sp {
+            background: #c0c0c0;
+            color: #333;
+        }
+
+        .banner-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+
+        .tag-new {
+            background: #4caf50;
+            color: white;
+        }
+
+        .tag-rebanner {
+            background: #ff9800;
+            color: white;
+        }
+
+        .banner-date {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .banner-copies {
+            margin-left: 15px;
+        }
+
+        .banner-copies label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .banner-copies input {
+            width: 70px;
+            padding: 6px;
+            border: 2px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .overall-stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .overall-stats h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .success-rate {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .banner-result {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .banner-result h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .banner-result-date {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .resources-gained {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .resources-gained strong {
+            color: #856404;
+        }
+
+        .resources-gained-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .remaining-resources {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .remaining-resources h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .resource-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .resource-item {
+            text-align: center;
+        }
+
+        .resource-label {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .resource-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #c62828;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏐 Haikyuu Fly High Gacha Simulator</h1>
+            <p>Monte Carlo Simulation for Banner Planning</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">Current Resources</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="diamonds">On-hand Diamonds</label>
+                        <input type="number" id="diamonds" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="urTickets">UR Tickets</label>
+                        <input type="number" id="urTickets" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="spTickets">SP Tickets</label>
+                        <input type="number" id="spTickets" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="urPity">UR Pity (0-139)</label>
+                        <input type="number" id="urPity" value="0" min="0" max="139">
+                    </div>
+                    <div class="input-group">
+                        <label for="spPity">SP Pity (0-139)</label>
+                        <input type="number" id="spPity" value="0" min="0" max="139">
+                    </div>
+                    <div class="input-group">
+                        <label for="dailyIncome">Daily Diamond Income</label>
+                        <input type="number" id="dailyIncome" value="100" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="freeUR">Free UR Tickets (New Release)</label>
+                        <input type="number" id="freeUR" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="freeSP">Free SP Tickets (New Release)</label>
+                        <input type="number" id="freeSP" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="numSims">Number of Simulations</label>
+                        <input type="number" id="numSims" value="10000" min="1000" step="1000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Select Target Banners</h2>
+                <div class="banner-list" id="bannerList"></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="button" id="runSimulation">Run Simulation</button>
+            </div>
+
+            <div class="error" id="error"></div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Running simulation... This may take a moment.</p>
+            </div>
+
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        // Banner data
+        const BANNERS = [
+            ["Hinata SP Banner", "SP", "2025-12-24", "2026-01-06"],
+            ["Atsumu UR Rebanner", "UR", "2025-12-31", "2026-01-13"],
+            ["Kenma SP Banner", "SP", "2026-01-07", "2026-01-20"],
+            ["Osamu UR Rebanner", "UR", "2026-01-14", "2026-01-27"],
+            ["Nishinoya SP Banner", "SP", "2026-01-21", "2026-02-03"],
+            ["Hoshiumi UR Rebanner", "UR", "2026-01-28", "2026-02-10"],
+            ["Sugawara SP Banner", "SP", "2026-02-04", "2026-02-17"],
+            ["Hirugami UR Rebanner", "UR", "2026-02-11", "2026-02-24"],
+            ["Bokuto SP Banner", "SP", "2026-02-18", "2026-03-03"],
+            ["Sakusa UR Rebanner", "UR", "2026-02-25", "2026-03-10"],
+            ["Akaashi SP Banner", "SP", "2026-03-04", "2026-03-17"],
+            ["Komori UR Rebanner", "UR", "2026-03-11", "2026-03-24"],
+            ["Aone SP Banner", "SP", "2026-03-18", "2026-03-31"],
+            ["Kageyama UR Rebanner", "UR", "2026-03-25", "2026-04-07"],
+            ["Tsukishima SP Banner", "SP", "2026-04-01", "2026-04-14"],
+            ["Hinata SP Rebanner", "SP", "2026-04-08", "2026-04-21"],
+            ["Kuroo SP Banner", "SP", "2026-04-15", "2026-04-28"],
+            ["Kenma SP Rebanner", "SP", "2026-04-22", "2026-05-05"],
+            ["Kunimi SP Banner", "SP", "2026-04-29", "2026-05-12"],
+            ["Nishinoya SP Rebanner", "SP", "2026-05-06", "2026-05-19"],
+            ["Kogane SP Banner", "SP", "2026-05-13", "2026-05-26"],
+            ["Sugawara SP Rebanner", "SP", "2026-05-20", "2026-06-02"],
+            ["Oikawa SP Banner", "SP", "2026-05-27", "2026-06-09"],
+            ["Bokuto SP Rebanner", "SP", "2026-06-03", "2026-06-16"],
+            ["Iwaizumi SP Banner", "SP", "2026-06-10", "2026-06-23"],
+            ["Akaashi SP Rebanner", "SP", "2026-06-17", "2026-06-30"],
+            ["Ushijima SP Banner", "SP", "2026-06-24", "2026-07-07"],
+            ["Ginjima SP Banner", "SP", "2026-07-01", "2026-07-14"],
+            ["Tendo SP Banner", "SP", "2026-07-08", "2026-07-21"],
+            ["Aone SP Rebanner", "SP", "2026-07-15", "2026-07-28"],
+            ["Atsumu SP Banner", "SP", "2026-07-22", "2026-08-04"],
+            ["Tsukishima SP Rebanner", "SP", "2026-07-29", "2026-08-11"],
+            ["Osamu SP Banner", "SP", "2026-08-05", "2026-08-18"],
+            ["Kuroo SP Rebanner", "SP", "2026-08-12", "2026-08-25"],
+            ["Hoshiumi SP Banner", "SP", "2026-08-19", "2026-09-01"],
+            ["Kunimi SP Rebanner", "SP", "2026-08-26", "2026-09-08"],
+            ["Hirugami SP Banner", "SP", "2026-09-02", "2026-09-15"],
+            ["Kogane SP Rebanner", "SP", "2026-09-09", "2026-09-22"]
+        ];
+
+        function getBannerTag(name) {
+            return name.includes("Rebanner") ? "rebanner" : "new";
+        }
+
+        // Render banner list
+        function renderBanners() {
+            const bannerList = document.getElementById('bannerList');
+            bannerList.innerHTML = '';
+
+            BANNERS.forEach((banner, index) => {
+                const [name, type, startDate, endDate] = banner;
+                const tag = getBannerTag(name);
+                
+                const item = document.createElement('div');
+                item.className = 'banner-item';
+                item.innerHTML = `
+                    <input type="checkbox" id="banner${index}" data-index="${index}">
+                    <div class="banner-info">
+                        <div class="banner-name">
+                            ${name}
+                            <span class="banner-type type-${type.toLowerCase()}">${type}</span>
+                            <span class="banner-tag tag-${tag}">${tag === 'new' ? 'NEW' : 'REBANNER'}</span>
+                        </div>
+                        <div class="banner-date">${startDate} to ${endDate}</div>
+                    </div>
+                    <div class="banner-copies">
+                        <label>Copies:</label>
+                        <input type="number" id="copies${index}" value="1" min="1" max="10">
+                    </div>
+                `;
+                bannerList.appendChild(item);
+            });
+        }
+
+        // Run simulation
+        async function runSimulation() {
+            const errorDiv = document.getElementById('error');
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            const button = document.getElementById('runSimulation');
+
+            // Hide previous results and errors
+            errorDiv.classList.remove('show');
+            resultsDiv.classList.remove('show');
+
+            // Get selected banners
+            const selectedBanners = [];
+            BANNERS.forEach((banner, index) => {
+                const checkbox = document.getElementById(`banner${index}`);
+                const copiesInput = document.getElementById(`copies${index}`);
+                if (checkbox.checked) {
+                    selectedBanners.push({
+                        name: banner[0],
+                        copies: parseInt(copiesInput.value)
+                    });
+                }
+            });
+
+            if (selectedBanners.length === 0) {
+                errorDiv.textContent = 'Please select at least one banner!';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            // Collect input data
+            const data = {
+                diamonds: parseInt(document.getElementById('diamonds').value),
+                ur_tickets: parseInt(document.getElementById('urTickets').value),
+                sp_tickets: parseInt(document.getElementById('spTickets').value),
+                ur_pity: parseInt(document.getElementById('urPity').value),
+                sp_pity: parseInt(document.getElementById('spPity').value),
+                free_ur: parseInt(document.getElementById('freeUR').value),
+                free_sp: parseInt(document.getElementById('freeSP').value),
+                daily_income: parseInt(document.getElementById('dailyIncome').value),
+                num_sims: parseInt(document.getElementById('numSims').value),
+                targeted_banners: selectedBanners
+            };
+
+            // Show loading
+            loadingDiv.classList.add('show');
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/simulate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Simulation failed');
+                }
+
+                const results = await response.json();
+                console.log('Results:', results); // Debug log
+                displayResults(results);
+            } catch (error) {
+                console.error('Error:', error); // Debug log
+                errorDiv.textContent = `Error: ${error.message}. Check browser console for details.`;
+                errorDiv.classList.add('show');
+            } finally {
+                loadingDiv.classList.remove('show');
+                button.disabled = false;
+            }
+        }
+
+        // Display results
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            let html = `
+                <div class="overall-stats">
+                    <h2>Overall Success Rate</h2>
+                    <div class="success-rate">${data.success_rate.toFixed(2)}%</div>
+                    <p>Based on ${data.total_simulations.toLocaleString()} simulations</p>
+                </div>
+            `;
+
+            // Sort banners by date
+            const bannerNames = Object.keys(data.banner_statistics);
+            const sortedBanners = bannerNames.sort((a, b) => {
+                const dateA = new Date(data.banner_statistics[a].start_date);
+                const dateB = new Date(data.banner_statistics[b].start_date);
+                return dateA - dateB;
+            });
+
+            sortedBanners.forEach(bannerName => {
+                const stats = data.banner_statistics[bannerName];
+                const tag = getBannerTag(bannerName);
+                
+                html += `
+                    <div class="banner-result">
+                        <h3>
+                            ${bannerName}
+                            <span class="banner-tag tag-${tag}">${tag === 'new' ? 'NEW' : 'REBANNER'}</span>
+                        </h3>
+                        <div class="banner-result-date">
+                            ${stats.start_date} to ${stats.end_date} (${stats.duration_days} days)
+                        </div>
+                        
+                        <div class="resources-gained">
+                            <strong>Resources Gained Since Last Banner:</strong>
+                            <div class="resources-gained-grid">
+                                <div>💎 Total Diamonds: <strong>${stats.total_diamonds_gained.toLocaleString()}</strong></div>
+                                <div>🎟️ Free UR Tickets: <strong>${stats.free_ur_tickets_gained}</strong></div>
+                                <div>🎟️ Free SP Tickets: <strong>${stats.free_sp_tickets_gained}</strong></div>
+                                <div>🎁 Milestone Tickets (Avg): <strong>${stats.milestone_tickets_gained.toFixed(1)}</strong></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Success Rate</div>
+                                <div class="stat-value">${stats.success_rate.toFixed(2)}%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Average Pulls</div>
+                                <div class="stat-value">${stats.avg_pulls.toFixed(1)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Median Pulls</div>
+                                <div class="stat-value">${stats.median_pulls.toFixed(1)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">90th Percentile Pulls</div>
+                                <div class="stat-value">${stats.p90_pulls.toFixed(1)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Avg Diamonds Spent</div>
+                                <div class="stat-value">${stats.avg_diamonds.toFixed(0).toLocaleString()}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Median Diamonds Spent</div>
+                                <div class="stat-value">${stats.median_diamonds.toFixed(0).toLocaleString()}</div>
+                            </div>
+                        </div>
+
+                        <div class="remaining-resources">
+                            <h4>Remaining Resources After This Banner</h4>
+                            <div class="resource-row">
+                                <div class="resource-item">
+                                    <div class="resource-label">Avg Diamonds</div>
+                                    <div class="resource-value">${stats.avg_remaining_diamonds.toFixed(0).toLocaleString()}</div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-label">Median Diamonds</div>
+                                    <div class="resource-value">${stats.median_remaining_diamonds.toFixed(0).toLocaleString()}</div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-label">Avg UR Tickets</div>
+                                    <div class="resource-value">${stats.avg_remaining_ur_tickets.toFixed(1)}</div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-label">Avg SP Tickets</div>
+                                    <div class="resource-value">${stats.avg_remaining_sp_tickets.toFixed(1)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.classList.add('show');
+        }
+
+        // Event listeners
+        document.getElementById('runSimulation').addEventListener('click', runSimulation);
+
+        // Initialize
+        renderBanners();
+    </script>
+</body>
+</html>
