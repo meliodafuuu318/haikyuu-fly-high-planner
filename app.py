@@ -20,18 +20,28 @@ def simulate():
         data = request.json
         
         # Extract parameters
-        diamonds = data['diamonds']
-        ur_tickets = data['ur_tickets']
-        sp_tickets = data['sp_tickets']
-        ur_pity = data['ur_pity']
-        sp_pity = data['sp_pity']
-        free_ur = data['free_ur']
-        free_sp = data['free_sp']
-        daily_income = data['daily_income']
-        num_sims = data['num_sims']
+        # diamonds = data['diamonds']
+        # ur_tickets = data['ur_tickets']
+        # sp_tickets = data['sp_tickets']
+        # ur_pity = data['ur_pity']
+        # sp_pity = data['sp_pity']
+        # free_ur = data['free_ur']
+        # free_sp = data['free_sp']
+        # daily_income = data['daily_income']
+        # num_sims = data['num_sims']
+
+        diamonds = data.get('diamonds', 0)
+        ur_tickets = data.get('ur_tickets', 0)
+        sp_tickets = data.get('sp_tickets', 0)
+        ur_pity = data.get('ur_pity', 0)
+        sp_pity = data.get('sp_pity', 0)
+        free_ur = data.get('free_ur', 0)
+        free_sp = data.get('free_sp', 0)
+        daily_income = data.get('daily_income', 0)
+        num_sims = data.get('num_sims', 10000)
         
         # Convert targeted banners to the format expected by the simulator
-        targeted_banners = [(b['name'], b['copies']) for b in data['targeted_banners']]
+        targeted_banners = [(b['name'], b['copies']) for b in data.get('targeted_banners', [])]
         
         # Create simulator and run
         sim = GachaSimulator()
@@ -50,9 +60,9 @@ def simulate():
         
         # Convert datetime objects to strings for JSON serialization
         for banner_name, banner_stats in results['banner_statistics'].items():
-            if 'start_date' in banner_stats and banner_stats['start_date']:
+            if banner_stats.get('start_date'):
                 banner_stats['start_date'] = banner_stats['start_date'].strftime('%Y-%m-%d')
-            if 'end_date' in banner_stats and banner_stats['end_date']:
+            if banner_stats.get('end_date'):
                 banner_stats['end_date'] = banner_stats['end_date'].strftime('%Y-%m-%d')
         
         return jsonify(results)
@@ -62,4 +72,5 @@ def simulate():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

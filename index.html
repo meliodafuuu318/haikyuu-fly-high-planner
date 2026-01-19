@@ -645,46 +645,46 @@
                         <div class="resources-gained">
                             <strong>Resources Gained Since Last Banner:</strong>
                             <div class="resources-gained-grid">
-                                <div>💎 Total Diamonds: <strong>${stats.total_diamonds_gained.toLocaleString()}</strong></div>
-                                <div>🎟️ Free UR Tickets: <strong>${stats.free_ur_tickets_gained}</strong></div>
-                                <div>🎟️ Free SP Tickets: <strong>${stats.free_sp_tickets_gained}</strong></div>
+                                <div>💎 Total Diamonds: <strong>${(stats.total_diamonds_gained ?? 0).toLocaleString()}</strong></div>
+                                <div>🎟️ Free UR Tickets: <strong>${(stats.free_ur_tickets_gained ?? 0)}</strong></div>
+                                <div>🎟️ Free SP Tickets: <strong>${(stats.free_sp_tickets_gained ?? 0)}</strong></div>
                             </div>
                             <br><br>
                             <strong>🎁 Milestone Rewards (This Banner):</strong>
                             <div class="resources-gained-grid">
-                                <div>🎟️ Milestone Tickets (Avg): <strong>${stats.milestone_tickets_gained.toFixed(1)}</strong></div>
-                                <div>🧬 Milestone Copies (Avg): <strong>${stats.milestone_copies_rate.toFixed(2)}</strong></div>
+                                <div>🎟️ Milestone Tickets (Avg): <strong>${(stats.milestone_tickets_gained ?? 0).toFixed(1)}</strong></div>
+                                <div>🧬 Milestone Copies (Avg): <strong>${(stats.milestone_copies_rate ?? 0).toFixed(2)}</strong></div>
                             </div>
                         </div>
                         
                         <div class="stat-grid">
                             <div class="stat-item">
                                 <div class="stat-label">Success Rate</div>
-                                <div class="stat-value">${stats.success_rate.toFixed(2)}%</div>
+                                <div class="stat-value">${(stats.success_rate ?? 0).toFixed(2)}%</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">Average Pulls</div>
-                                <div class="stat-value">${stats.avg_pulls.toFixed(1)}</div>
+                                <div class="stat-value">${(stats.avg_pulls ?? 0).toFixed(1)}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">Median Pulls</div>
-                                <div class="stat-value">${stats.median_pulls.toFixed(1)}</div>
+                                <div class="stat-value">${(stats.median_pulls ?? 0).toFixed(1)}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">Average Base Copies</div>
-                                <div class="stat-value">${stats.avg_base_copies.toFixed(1)}</div>
+                                <div class="stat-value">${(stats.avg_base_copies ?? 0).toFixed(1)}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">90th Percentile Pulls</div>
-                                <div class="stat-value">${stats.p90_pulls.toFixed(1)}</div>
+                                <div class="stat-value">${(stats.p90_pulls ?? 0).toFixed(1)}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">Avg Diamonds Spent</div>
-                                <div class="stat-value">${stats.avg_diamonds.toFixed(0).toLocaleString()}</div>
+                                <div class="stat-value">${(stats.avg_diamonds ?? 0).toFixed(0).toLocaleString()}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">Median Diamonds Spent</div>
-                                <div class="stat-value">${stats.median_diamonds.toFixed(0).toLocaleString()}</div>
+                                <div class="stat-value">${(stats.median_diamonds ?? 0).toFixed(0).toLocaleString()}</div>
                             </div>
                         </div>
 
@@ -717,11 +717,10 @@
             resultsDiv.classList.add('show');
         }
 
-        // Event listeners
-        document.getElementById('runSimulation').addEventListener('click', runSimulation);
-
-        // Initialize
-        renderBanners();
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBanners();
+            document.getElementById('runSimulation').addEventListener('click', runSimulation);
+        });
     </script>
 </body>
 </html>
