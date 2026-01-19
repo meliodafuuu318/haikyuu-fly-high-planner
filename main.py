@@ -307,11 +307,9 @@ class GachaSimulator:
                 
                 # Calculate milestone tickets gained during pulls
                 if banner_type == "UR":
-                    milestone_tickets_gained = result['tickets_remaining'] - tickets_before
                     ur_tickets = result['tickets_remaining']
                     ur_pity = result['final_pity']
                 else:
-                    milestone_tickets_gained = result['tickets_remaining'] - tickets_before
                     sp_tickets = result['tickets_remaining']
                     sp_pity = result['final_pity']
                 
@@ -324,7 +322,7 @@ class GachaSimulator:
                 result['total_diamonds_gained'] = total_diamonds_gained
                 result['free_ur_tickets_gained'] = free_ur_gained
                 result['free_sp_tickets_gained'] = free_sp_gained
-                result['milestone_tickets_gained'] = milestone_tickets_gained
+                result['milestone_tickets_gained'] = result['milestone_tickets']
                 result['remaining_diamonds'] = diamonds
                 result['remaining_ur_tickets'] = ur_tickets
                 result['remaining_sp_tickets'] = sp_tickets
@@ -370,6 +368,7 @@ class GachaSimulator:
             'free_ur_tickets_gained': [],
             'free_sp_tickets_gained': [],
             'milestone_tickets_gained': [],
+            'milestone_copies': [],
             'banner_tag': None
         })
         
@@ -386,6 +385,9 @@ class GachaSimulator:
                 banner_stats[name]['free_ur_tickets_gained'].append(banner_result['free_ur_tickets_gained'])
                 banner_stats[name]['free_sp_tickets_gained'].append(banner_result['free_sp_tickets_gained'])
                 banner_stats[name]['milestone_tickets_gained'].append(banner_result['milestone_tickets_gained'])
+                banner_stats[name]['milestone_copies'].append(banner_result['milestone_copies'])
+                base_copies = banner_result['copies_obtained'] - banner_result['milestone_copies']
+                banner_stats[name].setdefault('base_copies', []).append(base_copies)
                 banner_stats[name]['start_date'] = banner_result['banner_start_date']
                 banner_stats[name]['end_date'] = banner_result['banner_end_date']
                 banner_stats[name]['duration_days'] = banner_result['banner_duration_days']
@@ -425,6 +427,8 @@ class GachaSimulator:
                     'free_ur_tickets_gained': int(np.mean(stats['free_ur_tickets_gained'])),
                     'free_sp_tickets_gained': int(np.mean(stats['free_sp_tickets_gained'])),
                     'milestone_tickets_gained': float(np.mean(stats['milestone_tickets_gained'])),
+                    'milestone_copies_rate': float(np.mean(stats['milestone_copies'])),
+                    'avg_base_copies': float(np.mean(stats['base_copies'])) if 'base_copies' in stats else 0,
                     'start_date': stats['start_date'],
                     'end_date': stats['end_date'],
                     'duration_days': stats['duration_days'],
@@ -508,14 +512,20 @@ def main():
         tag_display = f"[{stats['banner_tag'].upper()}]"
         print(f"\n{banner_name} {tag_display}")
         print(f"  Period: {stats['start_date'].strftime('%Y-%m-%d')} to {stats['end_date'].strftime('%Y-%m-%d')} ({stats['duration_days']} days)")
-        print(f"\n  RESOURCES GAINED SINCE LAST BANNER:")
+        print(f"\n  PASSIVE RESOURCES GAINED SINCE LAST BANNER:")
         print(f"    Total Diamonds: {stats['total_diamonds_gained']:,}")
         print(f"    Free UR Tickets: {stats['free_ur_tickets_gained']}")
         print(f"    Free SP Tickets: {stats['free_sp_tickets_gained']}")
+        print(f"\n  MILESTONE REWARDS (THIS BANNER):")
         print(f"    Milestone Tickets (Avg): {stats['milestone_tickets_gained']:.1f}")
+        print(
+            f"    Extra Copy @ 200 Pulls: "
+            f"{stats['milestone_copies_rate'] * 100:.1f}%"
+        )
         print(f"\n  Success Rate: {stats['success_rate']:.2f}%")
         print(f"  Average Pulls: {stats['avg_pulls']:.1f}")
         print(f"  Median Pulls: {stats['median_pulls']:.1f}")
+        print(f"  Average Base Copies Obtained: {stats['avg_base_copies']:.2f}")
         print(f"  10th Percentile: {stats['p10_pulls']:.1f} pulls")
         print(f"  50th Percentile: {stats['p50_pulls']:.1f} pulls")
         print(f"  90th Percentile: {stats['p90_pulls']:.1f} pulls")

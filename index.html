@@ -648,7 +648,12 @@
                                 <div>💎 Total Diamonds: <strong>${stats.total_diamonds_gained.toLocaleString()}</strong></div>
                                 <div>🎟️ Free UR Tickets: <strong>${stats.free_ur_tickets_gained}</strong></div>
                                 <div>🎟️ Free SP Tickets: <strong>${stats.free_sp_tickets_gained}</strong></div>
-                                <div>🎁 Milestone Tickets (Avg): <strong>${stats.milestone_tickets_gained.toFixed(1)}</strong></div>
+                            </div>
+                            <br><br>
+                            <strong>🎁 Milestone Rewards (This Banner):</strong>
+                            <div class="resources-gained-grid">
+                                <div>🎟️ Milestone Tickets (Avg): <strong>${stats.milestone_tickets_gained.toFixed(1)}</strong></div>
+                                <div>🧬 Milestone Copies (Avg): <strong>${stats.milestone_copies_rate.toFixed(2)}</strong></div>
                             </div>
                         </div>
                         
@@ -664,6 +669,10 @@
                             <div class="stat-item">
                                 <div class="stat-label">Median Pulls</div>
                                 <div class="stat-value">${stats.median_pulls.toFixed(1)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Average Base Copies</div>
+                                <div class="stat-value">${stats.avg_base_copies.toFixed(1)}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">90th Percentile Pulls</div>
