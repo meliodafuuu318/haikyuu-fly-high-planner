@@ -239,6 +239,10 @@ class GachaSimulator:
                 
                 _, banner_type, start_date, end_date = banner_info
                 
+                # Skip banners that have already ended
+                if end_date < current_date:
+                    continue
+                
                 # Get banner tag (rebanner or new release)
                 banner_tag = self.get_banner_tag(banner_name)
                 
@@ -277,8 +281,12 @@ class GachaSimulator:
                     diamonds += days_diff * daily_income
                     current_date = start_date
                 
-                # Add diamonds earned during the banner duration
-                banner_duration_days = (end_date - start_date).days
+                # Calculate actual days remaining in banner based on current date
+                # If banner already started, use current_date; otherwise use start_date
+                effective_start = max(current_date, start_date)
+                banner_duration_days = (end_date - effective_start).days
+                
+                # Add diamonds earned during the remaining banner duration
                 diamonds += banner_duration_days * daily_income
                 
                 # Calculate total diamonds gained since last banner
@@ -512,7 +520,7 @@ def main():
         tag_display = f"[{stats['banner_tag'].upper()}]"
         print(f"\n{banner_name} {tag_display}")
         print(f"  Period: {stats['start_date'].strftime('%Y-%m-%d')} to {stats['end_date'].strftime('%Y-%m-%d')} ({stats['duration_days']} days)")
-        print(f"\n  PASSIVE RESOURCES GAINED SINCE LAST BANNER:")
+        print(f"\n  RESOURCES GAINED SINCE LAST BANNER:")
         print(f"    Total Diamonds: {stats['total_diamonds_gained']:,}")
         print(f"    Free UR Tickets: {stats['free_ur_tickets_gained']}")
         print(f"    Free SP Tickets: {stats['free_sp_tickets_gained']}")
