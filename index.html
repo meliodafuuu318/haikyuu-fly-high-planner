@@ -1,747 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haikyuu Fly High Gacha Simulator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 1.3em;
-            color: #667eea;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .subsection-title {
-            font-size: 1.1em;
-            color: #764ba2;
-            margin: 15px 0 10px 0;
-            font-weight: 600;
-        }
-
-        .input-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-group label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #333;
-            font-size: 0.9em;
-        }
-
-        .input-group input {
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .income-calculator {
-            background: #f9f9f9;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .income-source {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 8px;
-            background: white;
-            border-radius: 5px;
-            gap: 15px;
-        }
-
-        .income-source input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .income-source-label {
-            flex: 1;
-            font-weight: 500;
-            color: #333;
-            min-width: 200px;
-        }
-
-        .income-source input[type="number"] {
-            width: 100px;
-            padding: 6px 10px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 0.95em;
-        }
-
-        .income-source input[type="number"]:disabled {
-            background: #f0f0f0;
-            color: #999;
-        }
-
-        .income-source-value {
-            font-weight: 600;
-            color: #667eea;
-            min-width: 80px;
-            text-align: right;
-        }
-
-        .income-summary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-        .income-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .income-summary-item {
-            text-align: center;
-        }
-
-        .income-summary-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-bottom: 5px;
-        }
-
-        .income-summary-value {
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-
-        .banner-list {
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            background: #f9f9f9;
-        }
-
-        .active-banners, .expired-banners {
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 15px;
-        }
-
-        .expired-section-header {
-            padding: 15px;
-            background: #f5f5f5;
-            border-top: 2px solid #ddd;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.3s;
-        }
-
-        .expired-section-header:hover {
-            background: #e0e0e0;
-        }
-
-        .expired-section-header h3 {
-            margin: 0;
-            font-size: 1em;
-            color: #666;
-        }
-
-        .toggle-icon {
-            font-size: 1.2em;
-            color: #666;
-            transition: transform 0.3s;
-        }
-
-        .toggle-icon.expanded {
-            transform: rotate(180deg);
-        }
-
-        .expired-banners {
-            max-height: 0;
-            overflow: hidden;
-            padding: 0 15px;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-        }
-
-        .expired-banners.show {
-            max-height: 500px;
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .banner-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            margin-bottom: 10px;
-            background: white;
-            border-radius: 5px;
-            border: 2px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .banner-item:hover {
-            border-color: #667eea;
-            transform: translateX(5px);
-        }
-
-        .banner-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            cursor: pointer;
-        }
-
-        .banner-info {
-            flex: 1;
-        }
-
-        .banner-name {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 3px;
-        }
-
-        .banner-type {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 3px;
-            font-size: 0.75em;
-            margin-left: 10px;
-            font-weight: 600;
-        }
-
-        .type-ur {
-            background: #ff5e00;
-            color: #04003f;
-        }
-
-        .type-sp {
-            background: #0099ff;
-            color: #333;
-        }
-
-        .banner-tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 0.7em;
-            margin-left: 5px;
-            font-weight: 600;
-        }
-
-        .tag-new {
-            background: #4caf50;
-            color: white;
-        }
-
-        .tag-rebanner {
-            background: #ff9800;
-            color: white;
-        }
-
-        .banner-date {
-            font-size: 0.85em;
-            color: #666;
-        }
-
-        .banner-copies {
-            margin-left: 15px;
-        }
-
-        .banner-copies label {
-            font-size: 0.8em;
-            color: #666;
-            margin-bottom: 3px;
-        }
-
-        .banner-copies input {
-            width: 70px;
-            padding: 6px;
-            border: 2px solid #ddd;
-            border-radius: 3px;
-            text-align: center;
-        }
-
-        .button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            font-weight: 600;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .button:active {
-            transform: translateY(0);
-        }
-
-        .button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            display: none;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .results {
-            margin-top: 30px;
-            display: none;
-        }
-
-        .results.show {
-            display: block;
-        }
-
-        .overall-stats {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .overall-stats h2 {
-            font-size: 1.3em;
-            margin-bottom: 15px;
-        }
-
-        .success-rate {
-            font-size: 3.5em;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .banner-result {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 5px solid #667eea;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .banner-result h3 {
-            color: #667eea;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .banner-result-date {
-            font-size: 0.8em;
-            color: #666;
-            margin-bottom: 15px;
-        }
-
-        .resources-gained {
-            background: #fff3cd;
-            padding: 12px;
-            border-radius: 5px;
-            margin: 15px 0;
-            border-left: 4px solid #ffc107;
-        }
-
-        .resources-gained strong {
-            color: #856404;
-        }
-
-        .resources-gained-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 8px;
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .stat-item {
-            padding: 12px;
-            background: #f9f9f9;
-            border-radius: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.85em;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .remaining-resources {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-
-        .remaining-resources h4 {
-            color: #1976d2;
-            margin-bottom: 10px;
-            font-size: 1em;
-        }
-
-        .resource-row {
-            display: flex;
-            justify-content: space-around;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .resource-item {
-            text-align: center;
-        }
-
-        .resource-label {
-            font-size: 0.85em;
-            color: #666;
-        }
-
-        .resource-value {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #1976d2;
-        }
-
-        .error {
-            background: #ffebee;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 5px;
-            border-left: 4px solid #c62828;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .error.show {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🏐 Haikyuu Fly High Gacha Simulator</h1>
-            <p>Monte Carlo Simulation for Banner Planning</p>
-            <p style="font-size: 0.85em; margin-top: 10px; opacity: 0.9;">By: meliodafuuu318</p>
-        </div>
-
-        <div class="content">
-            <div class="section">
-                <h2 class="section-title">Current Resources</h2>
-                <div class="input-grid">
-                    <div class="input-group">
-                        <label for="diamonds">On-hand Diamonds</label>
-                        <input type="number" id="diamonds" value="0" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="urTickets">UR Tickets</label>
-                        <input type="number" id="urTickets" value="0" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="spTickets">SP Tickets</label>
-                        <input type="number" id="spTickets" value="0" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="urPity">UR Pity (0-139)</label>
-                        <input type="number" id="urPity" value="0" min="0" max="139">
-                    </div>
-                    <div class="input-group">
-                        <label for="spPity">SP Pity (0-139)</label>
-                        <input type="number" id="spPity" value="0" min="0" max="139">
-                    </div>
-                    <div class="input-group">
-                        <label for="freeUR">Free UR Tickets (New Release)</label>
-                        <input type="number" id="freeUR" value="0" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="freeSP">Free SP Tickets (New Release)</label>
-                        <input type="number" id="freeSP" value="0" min="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="numSims">Number of Simulations</label>
-                        <input type="number" id="numSims" value="10000" min="1000" step="1000">
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title" style="cursor: pointer; user-select: none;" id="incomeCalcHeader">
-                    Daily Diamond Income Calculator
-                    <span style="float: right; font-size: 0.8em; color: #764ba2;">💎 <span id="headerDailyIncome">0</span>/day</span>
-                    <span class="toggle-icon" id="incomeToggleIcon" style="float: right; margin-right: 15px;">▼</span>
-                </h2>
-                <div class="income-calculator" id="incomeCalculatorContent" style="display: none;">
-                    <div class="subsection-title">Daily Sources</div>
-                    
-                    <div class="income-source">
-                        <input type="checkbox" id="daily_mission" checked>
-                        <label class="income-source-label" for="daily_mission">Daily Mission</label>
-                        <input type="number" id="daily_mission_value" value="60" min="0">
-                        <span class="income-source-value">💎 <span id="daily_mission_display">60</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="training_program" checked>
-                        <label class="income-source-label" for="training_program">Training Program</label>
-                        <input type="number" id="training_program_value" value="80" min="0">
-                        <span class="income-source-value">💎 <span id="training_program_display">80</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="exercise" checked>
-                        <label class="income-source-label" for="exercise">Exercise</label>
-                        <input type="number" id="exercise_value" value="20" min="0">
-                        <span class="income-source-value">💎 <span id="exercise_display">20</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="quiz" checked>
-                        <label class="income-source-label" for="quiz">Quiz</label>
-                        <input type="number" id="quiz_value" value="10" min="0">
-                        <span class="income-source-value">💎 <span id="quiz_display">10</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="peak_challenge" checked>
-                        <label class="income-source-label" for="peak_challenge">Peak Challenge</label>
-                        <input type="number" id="peak_challenge_value" value="15" min="0">
-                        <span class="income-source-value">💎 <span id="peak_challenge_display">15</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="peak_ranking" checked>
-                        <label class="income-source-label" for="peak_ranking">Peak Challenge Ranking</label>
-                        <input type="number" id="peak_ranking_value" value="10" min="0">
-                        <span class="income-source-value">💎 <span id="peak_ranking_display">10</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="monthly_pass">
-                        <label class="income-source-label" for="monthly_pass">Monthly Pass</label>
-                        <input type="number" id="monthly_pass_value" value="90" min="0">
-                        <span class="income-source-value">💎 <span id="monthly_pass_display">90</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="premium_pass">
-                        <label class="income-source-label" for="premium_pass">Premium Monthly Pass</label>
-                        <input type="number" id="premium_pass_value" value="100" min="0">
-                        <span class="income-source-value">💎 <span id="premium_pass_display">100</span>/day</span>
-                    </div>
-
-                    <div class="subsection-title">Weekly Sources (Averaged per Day)</div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="weekly_mission" checked>
-                        <label class="income-source-label" for="weekly_mission">Weekly Mission</label>
-                        <input type="number" id="weekly_mission_value" value="100" min="0">
-                        <span class="income-source-value">💎 <span id="weekly_mission_display">14.3</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="weekend_bonus" checked>
-                        <label class="income-source-label" for="weekend_bonus">Weekend Bonus</label>
-                        <input type="number" id="weekend_bonus_value" value="120" min="0">
-                        <span class="income-source-value">💎 <span id="weekend_bonus_display">17.1</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="specialty_trial" checked>
-                        <label class="income-source-label" for="specialty_trial">Specialty Trial</label>
-                        <input type="number" id="specialty_trial_value" value="520" min="0">
-                        <span class="income-source-value">💎 <span id="specialty_trial_display">74.3</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="club_benefit" checked>
-                        <label class="income-source-label" for="club_benefit">Club Benefit</label>
-                        <input type="number" id="club_benefit_value" value="50" min="0">
-                        <span class="income-source-value">💎 <span id="club_benefit_display">7.1</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="casual_game" checked>
-                        <label class="income-source-label" for="casual_game">Casual Game</label>
-                        <input type="number" id="casual_game_value" value="150" min="0">
-                        <span class="income-source-value">💎 <span id="casual_game_display">21.4</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="garden_commission" checked>
-                        <label class="income-source-label" for="garden_commission">Garden Commission Order</label>
-                        <input type="number" id="garden_commission_value" value="50" min="0">
-                        <span class="income-source-value">💎 <span id="garden_commission_display">7.1</span>/day</span>
-                    </div>
-
-                    <div class="subsection-title">Match Streak (Weekly Average per Day)</div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="match_2v2" checked>
-                        <label class="income-source-label" for="match_2v2">2v2 Match Streak (Biweekly)</label>
-                        <input type="number" id="match_2v2_value" value="640" min="0">
-                        <span class="income-source-value">💎 <span id="match_2v2_display">45.7</span>/day</span>
-                    </div>
-
-                    <div class="income-source">
-                        <input type="checkbox" id="match_3v3" checked>
-                        <label class="income-source-label" for="match_3v3">3v3 Match Streak (Biweekly)</label>
-                        <input type="number" id="match_3v3_value" value="560" min="0">
-                        <span class="income-source-value">💎 <span id="match_3v3_display">40.0</span>/day</span>
-                    </div>
-
-                    <div class="income-summary">
-                        <h3>Total Daily Income</h3>
-                        <div class="income-summary-grid">
-                            <div class="income-summary-item">
-                                <div class="income-summary-label">Per Day</div>
-                                <div class="income-summary-value">💎 <span id="total_daily">0</span></div>
-                            </div>
-                            <div class="income-summary-item">
-                                <div class="income-summary-label">Per Week</div>
-                                <div class="income-summary-value">💎 <span id="total_weekly">0</span></div>
-                            </div>
-                            <div class="income-summary-item">
-                                <div class="income-summary-label">Per Month (30d)</div>
-                                <div class="income-summary-value">💎 <span id="total_monthly">0</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title">Select Target Banners</h2>
-                <div class="banner-list">
-                    <div class="expired-section-header" id="expiredHeader">
-                        <h3>Expired Banners (<span id="expiredCount">0</span>)</h3>
-                        <span class="toggle-icon" id="toggleIcon">▼</span>
-                    </div>
-                    <div class="expired-banners" id="expiredBanners"></div>
-                    <div class="active-banners" id="activeBanners"></div>
-                </div>
-            </div>
-
-            <div style="text-align: center;">
-                <button class="button" id="runSimulation">Run Simulation</button>
-            </div>
-
-            <div class="error" id="error"></div>
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Running simulation... This may take a moment.</p>
-            </div>
-
-            <div class="results" id="results"></div>
-        </div>
-    </div>
-
     <script>
         // Banner data
         const BANNERS = [
@@ -1074,7 +333,11 @@
                                 <div>💎 Total Diamonds: <strong>${stats.total_diamonds_gained.toLocaleString()}</strong></div>
                                 <div>🎟️ Free UR Tickets: <strong>${stats.free_ur_tickets_gained}</strong></div>
                                 <div>🎟️ Free SP Tickets: <strong>${stats.free_sp_tickets_gained}</strong></div>
+                            </div>
+                            <div class="resources-gained-grid">
                                 <div>🎁 Milestone Tickets (Avg): <strong>${stats.milestone_tickets_gained.toFixed(1)}</strong></div>
+                                <div>🧬 Milestone Copies (Avg): <strong>${(stats.milestone_copies_rate ?? 0).toFixed(2)}</strong></div>
+                                <div></div>
                             </div>
                         </div>
                         
@@ -1092,8 +355,8 @@
                                 <div class="stat-value">${stats.median_pulls.toFixed(1)}</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-label">90th Percentile Pulls</div>
-                                <div class="stat-value">${stats.p90_pulls.toFixed(1)}</div>
+                                <div class="stat-label">Average Pulled Copies</div>
+                                <div class="stat-value">${(stats.avg_base_copies ?? 0).toFixed(1)}</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">Avg Diamonds Spent</div>
@@ -1143,4 +406,911 @@
         });
     </script>
 </body>
-</html>
+</html><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haikyuu Fly High Gacha Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-title-text {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .section-title-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .subsection-title {
+            font-size: 1.1em;
+            color: #764ba2;
+            margin: 15px 0 10px 0;
+            font-weight: 600;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .income-calculator {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .income-source {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 5px;
+            gap: 15px;
+        }
+
+        .income-source input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .income-source-label {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+            min-width: 200px;
+        }
+
+        .income-source input[type="number"] {
+            width: 100px;
+            padding: 6px 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        .income-source input[type="number"]:disabled {
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .income-source-value {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .income-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .income-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .income-summary-item {
+            text-align: center;
+        }
+
+        .income-summary-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .income-summary-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .banner-list {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+
+        .active-banners, .expired-banners {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .expired-section-header {
+            padding: 15px;
+            background: #f5f5f5;
+            border-top: 2px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .expired-section-header:hover {
+            background: #e0e0e0;
+        }
+
+        .expired-section-header h3 {
+            margin: 0;
+            font-size: 1em;
+            color: #666;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            color: #666;
+            transition: transform 0.3s;
+        }
+
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .expired-banners {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 15px;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+
+        .expired-banners.show {
+            max-height: 500px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .banner-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .banner-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .banner-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .banner-info {
+            flex: 1;
+        }
+
+        .banner-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .banner-type {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+
+        .type-ur {
+            background: #ff5e00;
+            color: #04003f;
+        }
+
+        .type-sp {
+            background: #0099ff;
+            color: #333;
+        }
+
+        .banner-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            margin-left: 5px;
+            font-weight: 600;
+        }
+
+        .tag-new {
+            background: #4caf50;
+            color: white;
+        }
+
+        .tag-rebanner {
+            background: #ff9800;
+            color: white;
+        }
+
+        .banner-date {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .banner-copies {
+            margin-left: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .banner-copies label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .banner-copies input {
+            width: 70px;
+            padding: 6px;
+            border: 2px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .overall-stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .overall-stats h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .success-rate {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .banner-result {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .banner-result h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .banner-result-date {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .resources-gained {
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .resources-gained strong {
+            color: #856404;
+        }
+
+        .resources-gained-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .remaining-resources {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .remaining-resources h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .resource-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .resource-item {
+            text-align: center;
+        }
+
+        .resource-label {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .resource-value {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #c62828;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .section-title {
+                font-size: 1.1em;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .section-title-text {
+                width: 100%;
+            }
+
+            .section-title-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .subsection-title {
+                font-size: 1em;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .income-source {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .income-source-label {
+                min-width: unset;
+                flex: 1 1 100%;
+            }
+
+            .income-source input[type="number"] {
+                width: 80px;
+            }
+
+            .income-source-value {
+                min-width: unset;
+                flex: 1 1 auto;
+            }
+
+            .income-summary-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .income-summary-value {
+                font-size: 1.5em;
+            }
+
+            .banner-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .banner-item input[type="checkbox"] {
+                margin-right: 0;
+            }
+
+            .banner-copies {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .banner-copies input {
+                width: 100%;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resources-gained-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resource-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .button {
+                width: 100%;
+                padding: 12px 20px;
+            }
+
+            .success-rate {
+                font-size: 2.5em;
+            }
+
+            .overall-stats h2 {
+                font-size: 1.1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3em;
+            }
+
+            .content {
+                padding: 10px;
+            }
+
+            .income-calculator {
+                padding: 15px;
+            }
+
+            .banner-name {
+                font-size: 0.9em;
+            }
+
+            .banner-type {
+                display: block;
+                margin-left: 0;
+                margin-top: 5px;
+            }
+
+            .banner-tag {
+                display: block;
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏐 Haikyuu Fly High Gacha Simulator</h1>
+            <p>Monte Carlo Simulation for Banner Planning</p>
+            <p style="font-size: 0.85em; margin-top: 10px; opacity: 0.9;">By: meliodafuuu318</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2 class="section-title">Current Resources</h2>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="diamonds">On-hand Diamonds</label>
+                        <input type="number" id="diamonds" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="urTickets">UR Tickets</label>
+                        <input type="number" id="urTickets" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="spTickets">SP Tickets</label>
+                        <input type="number" id="spTickets" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="urPity">UR Pity (0-139)</label>
+                        <input type="number" id="urPity" value="0" min="0" max="139">
+                    </div>
+                    <div class="input-group">
+                        <label for="spPity">SP Pity (0-139)</label>
+                        <input type="number" id="spPity" value="0" min="0" max="139">
+                    </div>
+                    <div class="input-group">
+                        <label for="freeUR">Free UR Tickets (New Release)</label>
+                        <input type="number" id="freeUR" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="freeSP">Free SP Tickets (New Release)</label>
+                        <input type="number" id="freeSP" value="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="numSims">Number of Simulations</label>
+                        <input type="number" id="numSims" value="10000" min="1000" step="1000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title" style="cursor: pointer; user-select: none;" id="incomeCalcHeader">
+                    <span class="section-title-text">Daily Diamond Income Calculator</span>
+                    <span class="section-title-info">
+                        <span style="font-size: 0.8em; color: #764ba2;">💎 <span id="headerDailyIncome">0</span>/day</span>
+                        <span class="toggle-icon" id="incomeToggleIcon">▼</span>
+                    </span>
+                </h2>
+                <div class="income-calculator" id="incomeCalculatorContent" style="display: none;">
+                    <div class="subsection-title">Daily Sources</div>
+                    
+                    <div class="income-source">
+                        <input type="checkbox" id="daily_mission" checked>
+                        <label class="income-source-label" for="daily_mission">Daily Mission</label>
+                        <input type="number" id="daily_mission_value" value="60" min="0">
+                        <span class="income-source-value">💎 <span id="daily_mission_display">60</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="training_program" checked>
+                        <label class="income-source-label" for="training_program">Training Program</label>
+                        <input type="number" id="training_program_value" value="80" min="0">
+                        <span class="income-source-value">💎 <span id="training_program_display">80</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="exercise" checked>
+                        <label class="income-source-label" for="exercise">Exercise</label>
+                        <input type="number" id="exercise_value" value="20" min="0">
+                        <span class="income-source-value">💎 <span id="exercise_display">20</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="quiz" checked>
+                        <label class="income-source-label" for="quiz">Quiz</label>
+                        <input type="number" id="quiz_value" value="10" min="0">
+                        <span class="income-source-value">💎 <span id="quiz_display">10</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="peak_challenge" checked>
+                        <label class="income-source-label" for="peak_challenge">Peak Challenge</label>
+                        <input type="number" id="peak_challenge_value" value="15" min="0">
+                        <span class="income-source-value">💎 <span id="peak_challenge_display">15</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="peak_ranking" checked>
+                        <label class="income-source-label" for="peak_ranking">Peak Challenge Ranking</label>
+                        <input type="number" id="peak_ranking_value" value="10" min="0">
+                        <span class="income-source-value">💎 <span id="peak_ranking_display">10</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="monthly_pass">
+                        <label class="income-source-label" for="monthly_pass">Monthly Pass</label>
+                        <input type="number" id="monthly_pass_value" value="90" min="0">
+                        <span class="income-source-value">💎 <span id="monthly_pass_display">90</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="premium_pass">
+                        <label class="income-source-label" for="premium_pass">Premium Monthly Pass</label>
+                        <input type="number" id="premium_pass_value" value="100" min="0">
+                        <span class="income-source-value">💎 <span id="premium_pass_display">100</span>/day</span>
+                    </div>
+
+                    <div class="subsection-title">Weekly Sources (Averaged per Day)</div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="weekly_mission" checked>
+                        <label class="income-source-label" for="weekly_mission">Weekly Mission</label>
+                        <input type="number" id="weekly_mission_value" value="100" min="0">
+                        <span class="income-source-value">💎 <span id="weekly_mission_display">14.3</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="weekend_bonus" checked>
+                        <label class="income-source-label" for="weekend_bonus">Weekend Bonus</label>
+                        <input type="number" id="weekend_bonus_value" value="120" min="0">
+                        <span class="income-source-value">💎 <span id="weekend_bonus_display">17.1</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="specialty_trial" checked>
+                        <label class="income-source-label" for="specialty_trial">Specialty Trial</label>
+                        <input type="number" id="specialty_trial_value" value="520" min="0">
+                        <span class="income-source-value">💎 <span id="specialty_trial_display">74.3</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="club_benefit" checked>
+                        <label class="income-source-label" for="club_benefit">Club Benefit</label>
+                        <input type="number" id="club_benefit_value" value="50" min="0">
+                        <span class="income-source-value">💎 <span id="club_benefit_display">7.1</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="casual_game" checked>
+                        <label class="income-source-label" for="casual_game">Casual Game</label>
+                        <input type="number" id="casual_game_value" value="150" min="0">
+                        <span class="income-source-value">💎 <span id="casual_game_display">21.4</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="garden_commission" checked>
+                        <label class="income-source-label" for="garden_commission">Garden Commission Order</label>
+                        <input type="number" id="garden_commission_value" value="50" min="0">
+                        <span class="income-source-value">💎 <span id="garden_commission_display">7.1</span>/day</span>
+                    </div>
+
+                    <div class="subsection-title">Match Streak (Weekly Average per Day)</div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="match_2v2" checked>
+                        <label class="income-source-label" for="match_2v2">2v2 Match Streak (Biweekly)</label>
+                        <input type="number" id="match_2v2_value" value="640" min="0">
+                        <span class="income-source-value">💎 <span id="match_2v2_display">45.7</span>/day</span>
+                    </div>
+
+                    <div class="income-source">
+                        <input type="checkbox" id="match_3v3" checked>
+                        <label class="income-source-label" for="match_3v3">3v3 Match Streak (Biweekly)</label>
+                        <input type="number" id="match_3v3_value" value="560" min="0">
+                        <span class="income-source-value">💎 <span id="match_3v3_display">40.0</span>/day</span>
+                    </div>
+
+                    <div class="income-summary">
+                        <h3>Total Daily Income</h3>
+                        <div class="income-summary-grid">
+                            <div class="income-summary-item">
+                                <div class="income-summary-label">Per Day</div>
+                                <div class="income-summary-value">💎 <span id="total_daily">0</span></div>
+                            </div>
+                            <div class="income-summary-item">
+                                <div class="income-summary-label">Per Week</div>
+                                <div class="income-summary-value">💎 <span id="total_weekly">0</span></div>
+                            </div>
+                            <div class="income-summary-item">
+                                <div class="income-summary-label">Per Month (30d)</div>
+                                <div class="income-summary-value">💎 <span id="total_monthly">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Select Target Banners</h2>
+                <div class="banner-list">
+                    <div class="expired-section-header" id="expiredHeader">
+                        <h3>Expired Banners (<span id="expiredCount">0</span>)</h3>
+                        <span class="toggle-icon" id="toggleIcon">▼</span>
+                    </div>
+                    <div class="expired-banners" id="expiredBanners"></div>
+                    <div class="active-banners" id="activeBanners"></div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="button" id="runSimulation">Run Simulation</button>
+            </div>
+
+            <div class="error" id="error"></div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Running simulation... This may take a moment.</p>
+            </div>
+
+            <div class="results" id="results"></div>
+        </div>
+    </div>
