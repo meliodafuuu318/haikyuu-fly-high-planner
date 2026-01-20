@@ -2,6 +2,7 @@ import random
 import numpy as np
 from datetime import datetime, timedelta
 from collections import defaultdict
+from banners import BANNERS
 
 class GachaSimulator:
     def __init__(self):
@@ -23,46 +24,7 @@ class GachaSimulator:
         self.SP_HARD_PITY = 140
         
         # Hardcoded banner schedule (name, type, start_date, end_date)
-        self.BANNERS = [
-            ("Hinata SP Banner", "SP", datetime(2025, 12, 24), datetime(2026, 1, 6)),
-            ("Atsumu UR Rebanner", "UR", datetime(2025, 12, 31), datetime(2026, 1, 13)),
-            ("Kenma SP Banner", "SP", datetime(2026, 1, 7), datetime(2026, 1, 20)),
-            ("Osamu UR Rebanner", "UR", datetime(2026, 1, 14), datetime(2026, 1, 27)),
-            ("Nishinoya SP Banner", "SP", datetime(2026, 1, 21), datetime(2026, 2, 3)),
-            ("Hoshiumi UR Rebanner", "UR", datetime(2026, 1, 28), datetime(2026, 2, 10)),
-            ("Sugawara SP Banner", "SP", datetime(2026, 2, 4), datetime(2026, 2, 17)),
-            ("Hirugami UR Rebanner", "UR", datetime(2026, 2, 11), datetime(2026, 2, 24)),
-            ("Bokuto SP Banner", "SP", datetime(2026, 2, 18), datetime(2026, 3, 3)),
-            ("Sakusa UR Rebanner", "UR", datetime(2026, 2, 25), datetime(2026, 3, 10)),
-            ("Akaashi SP Banner", "SP", datetime(2026, 3, 4), datetime(2026, 3, 17)),
-            ("Komori UR Rebanner", "UR", datetime(2026, 3, 11), datetime(2026, 3, 24)),
-            ("Aone SP Banner", "SP", datetime(2026, 3, 18), datetime(2026, 3, 31)),
-            ("Kageyama UR Rebanner", "UR", datetime(2026, 3, 25), datetime(2026, 4, 7)),
-            ("Tsukishima SP Banner", "SP", datetime(2026, 4, 1), datetime(2026, 4, 14)),
-            ("Hinata SP Rebanner", "SP", datetime(2026, 4, 8), datetime(2026, 4, 21)),
-            ("Kuroo SP Banner", "SP", datetime(2026, 4, 15), datetime(2026, 4, 28)),
-            ("Kenma SP Rebanner", "SP", datetime(2026, 4, 22), datetime(2026, 5, 5)),
-            ("Kunimi SP Banner", "SP", datetime(2026, 4, 29), datetime(2026, 5, 12)),
-            ("Nishinoya SP Rebanner", "SP", datetime(2026, 5, 6), datetime(2026, 5, 19)),
-            ("Kogane SP Banner", "SP", datetime(2026, 5, 13), datetime(2026, 5, 26)),
-            ("Sugawara SP Rebanner", "SP", datetime(2026, 5, 20), datetime(2026, 6, 2)),
-            ("Oikawa SP Banner", "SP", datetime(2026, 5, 27), datetime(2026, 6, 9)),
-            ("Bokuto SP Rebanner", "SP", datetime(2026, 6, 3), datetime(2026, 6, 16)),
-            ("Iwaizumi SP Banner", "SP", datetime(2026, 6, 10), datetime(2026, 6, 23)),
-            ("Akaashi SP Rebanner", "SP", datetime(2026, 6, 17), datetime(2026, 6, 30)),
-            ("Ushijima SP Banner", "SP", datetime(2026, 6, 24), datetime(2026, 7, 7)),
-            ("Ginjima SP Banner", "SP", datetime(2026, 7, 1), datetime(2026, 7, 14)),
-            ("Tendo SP Banner", "SP", datetime(2026, 7, 8), datetime(2026, 7, 21)),
-            ("Aone SP Rebanner", "SP", datetime(2026, 7, 15), datetime(2026, 7, 28)),
-            ("Atsumu SP Banner", "SP", datetime(2026, 7, 22), datetime(2026, 8, 4)),
-            ("Tsukishima SP Rebanner", "SP", datetime(2026, 7, 29), datetime(2026, 8, 11)),
-            ("Osamu SP Banner", "SP", datetime(2026, 8, 5), datetime(2026, 8, 18)),
-            ("Kuroo SP Rebanner", "SP", datetime(2026, 8, 12), datetime(2026, 8, 25)),
-            ("Hoshiumi SP Banner", "SP", datetime(2026, 8, 19), datetime(2026, 9, 1)),
-            ("Kunimi SP Rebanner", "SP", datetime(2026, 8, 26), datetime(2026, 9, 8)),
-            ("Hirugami SP Banner", "SP", datetime(2026, 9, 2), datetime(2026, 9, 15)),
-            ("Kogane SP Rebanner", "SP", datetime(2026, 9, 9), datetime(2026, 9, 22)),
-        ]
+        self.BANNERS = BANNERS
     
     def calculate_ur_rate(self, pity_count):
         """Calculate UR drop rate based on current pity count"""
@@ -284,7 +246,9 @@ class GachaSimulator:
                 # Calculate actual days remaining in banner based on current date
                 # If banner already started, use current_date; otherwise use start_date
                 effective_start = max(current_date, start_date)
-                banner_duration_days = (end_date - effective_start).days
+                
+                # Calculate days remaining, ensuring at least 1 day if banner is still active
+                banner_duration_days = max(1, (end_date - effective_start).days)
                 
                 # Add diamonds earned during the remaining banner duration
                 diamonds += banner_duration_days * daily_income
