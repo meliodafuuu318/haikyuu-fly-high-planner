@@ -21,7 +21,7 @@ BANNERS = [
     ("Kenma SP Rebanner", "SP", datetime(2026, 4, 22, 0, 0, 0), datetime(2026, 5, 5, 23, 59, 59)),
     ("Kunimi SP Banner", "SP", datetime(2026, 4, 29, 0, 0, 0), datetime(2026, 5, 12, 23, 59, 59)),
     ("Nishinoya SP Rebanner", "SP", datetime(2026, 5, 6, 0, 0, 0), datetime(2026, 5, 19, 23, 59, 59)),
-    ("Kogane SP Banner", "SP", datetime(2026, 5, 13, 0, 0, 0), datetime(2026, 5, 26, 23, 59, 59)),
+    ("Koganegawa SP Banner", "SP", datetime(2026, 5, 13, 0, 0, 0), datetime(2026, 5, 26, 23, 59, 59)),
     ("Sugawara SP Rebanner", "SP", datetime(2026, 5, 20, 0, 0, 0), datetime(2026, 6, 2, 23, 59, 59)),
     ("Oikawa SP Banner", "SP", datetime(2026, 5, 27, 0, 0, 0), datetime(2026, 6, 9, 23, 59, 59)),
     ("Bokuto SP Rebanner", "SP", datetime(2026, 6, 3, 0, 0, 0), datetime(2026, 6, 16, 23, 59, 59)),
@@ -38,5 +38,5 @@ BANNERS = [
     ("Hoshiumi SP Banner", "SP", datetime(2026, 8, 19, 0, 0, 0), datetime(2026, 9, 1, 23, 59, 59)),
     ("Kunimi SP Rebanner", "SP", datetime(2026, 8, 26, 0, 0, 0), datetime(2026, 9, 8, 23, 59, 59)),
     ("Hirugami SP Banner", "SP", datetime(2026, 9, 2, 0, 0, 0), datetime(2026, 9, 15, 23, 59, 59)),
-    ("Kogane SP Rebanner", "SP", datetime(2026, 9, 9, 0, 0, 0), datetime(2026, 9, 22, 23, 59, 59)),
+    ("Koganegawa SP Rebanner", "SP", datetime(2026, 9, 9, 0, 0, 0), datetime(2026, 9, 22, 23, 59, 59)),
 ]

@@ -1,35 +1,37 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import sys
 import os
 
 # Import the GachaSimulator from your main.py
-# Make sure main.py is in the same directory
 from main import GachaSimulator
 
-app = Flask(__name__, static_folder='.')
+app = Flask(__name__)
 CORS(app)
 
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return send_file('index.html')
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    """Serve files from the assets directory"""
+    try:
+        assets_path = os.path.join(os.getcwd(), 'assets')
+        print(f"Attempting to serve: {filename}")
+        print(f"From path: {assets_path}")
+        print(f"Full path: {os.path.join(assets_path, filename)}")
+        print(f"File exists: {os.path.exists(os.path.join(assets_path, filename))}")
+        return send_from_directory(assets_path, filename)
+    except Exception as e:
+        print(f"Error serving asset {filename}: {str(e)}")
+        return str(e), 404
 
 @app.route('/simulate', methods=['POST'])
 def simulate():
     try:
         data = request.json
         
-        # Extract parameters
-        # diamonds = data['diamonds']
-        # ur_tickets = data['ur_tickets']
-        # sp_tickets = data['sp_tickets']
-        # ur_pity = data['ur_pity']
-        # sp_pity = data['sp_pity']
-        # free_ur = data['free_ur']
-        # free_sp = data['free_sp']
-        # daily_income = data['daily_income']
-        # num_sims = data['num_sims']
-
         diamonds = data.get('diamonds', 0)
         ur_tickets = data.get('ur_tickets', 0)
         sp_tickets = data.get('sp_tickets', 0)
@@ -69,8 +71,10 @@ def simulate():
         
     except Exception as e:
         print(f"Error: {str(e)}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)

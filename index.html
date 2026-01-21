@@ -1,412 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-        // Banner data
-        const BANNERS = [
-            ["Hinata SP Banner", "SP", "2025-12-24", "2026-01-06"],
-            ["Atsumu UR Rebanner", "UR", "2025-12-31", "2026-01-13"],
-            ["Kenma SP Banner", "SP", "2026-01-07", "2026-01-20"],
-            ["Osamu UR Rebanner", "UR", "2026-01-14", "2026-01-27"],
-            ["Nishinoya SP Banner", "SP", "2026-01-21", "2026-02-03"],
-            ["Hoshiumi UR Rebanner", "UR", "2026-01-28", "2026-02-10"],
-            ["Sugawara SP Banner", "SP", "2026-02-04", "2026-02-17"],
-            ["Hirugami UR Rebanner", "UR", "2026-02-11", "2026-02-24"],
-            ["Bokuto SP Banner", "SP", "2026-02-18", "2026-03-03"],
-            ["Sakusa UR Rebanner", "UR", "2026-02-25", "2026-03-10"],
-            ["Akaashi SP Banner", "SP", "2026-03-04", "2026-03-17"],
-            ["Komori UR Rebanner", "UR", "2026-03-11", "2026-03-24"],
-            ["Aone SP Banner", "SP", "2026-03-18", "2026-03-31"],
-            ["Kageyama UR Rebanner", "UR", "2026-03-25", "2026-04-07"],
-            ["Tsukishima SP Banner", "SP", "2026-04-01", "2026-04-14"],
-            ["Hinata SP Rebanner", "SP", "2026-04-08", "2026-04-21"],
-            ["Kuroo SP Banner", "SP", "2026-04-15", "2026-04-28"],
-            ["Kenma SP Rebanner", "SP", "2026-04-22", "2026-05-05"],
-            ["Kunimi SP Banner", "SP", "2026-04-29", "2026-05-12"],
-            ["Nishinoya SP Rebanner", "SP", "2026-05-06", "2026-05-19"],
-            ["Kogane SP Banner", "SP", "2026-05-13", "2026-05-26"],
-            ["Sugawara SP Rebanner", "SP", "2026-05-20", "2026-06-02"],
-            ["Oikawa SP Banner", "SP", "2026-05-27", "2026-06-09"],
-            ["Bokuto SP Rebanner", "SP", "2026-06-03", "2026-06-16"],
-            ["Iwaizumi SP Banner", "SP", "2026-06-10", "2026-06-23"],
-            ["Akaashi SP Rebanner", "SP", "2026-06-17", "2026-06-30"],
-            ["Ushijima SP Banner", "SP", "2026-06-24", "2026-07-07"],
-            ["Ginjima SP Banner", "SP", "2026-07-01", "2026-07-14"],
-            ["Tendo SP Banner", "SP", "2026-07-08", "2026-07-21"],
-            ["Aone SP Rebanner", "SP", "2026-07-15", "2026-07-28"],
-            ["Atsumu SP Banner", "SP", "2026-07-22", "2026-08-04"],
-            ["Tsukishima SP Rebanner", "SP", "2026-07-29", "2026-08-11"],
-            ["Osamu SP Banner", "SP", "2026-08-05", "2026-08-18"],
-            ["Kuroo SP Rebanner", "SP", "2026-08-12", "2026-08-25"],
-            ["Hoshiumi SP Banner", "SP", "2026-08-19", "2026-09-01"],
-            ["Kunimi SP Rebanner", "SP", "2026-08-26", "2026-09-08"],
-            ["Hirugami SP Banner", "SP", "2026-09-02", "2026-09-15"],
-            ["Kogane SP Rebanner", "SP", "2026-09-09", "2026-09-22"]
-        ];
-
-        // Income sources configuration
-        const incomeSources = {
-            daily: [
-                { id: 'daily_mission', default: 60 },
-                { id: 'training_program', default: 80 },
-                { id: 'exercise', default: 20 },
-                { id: 'quiz', default: 10 },
-                { id: 'peak_challenge', default: 15 },
-                { id: 'peak_ranking', default: 10 },
-                { id: 'monthly_pass', default: 90 },
-                { id: 'premium_pass', default: 100 }
-            ],
-            weekly: [
-                { id: 'weekly_mission', default: 100 },
-                { id: 'weekend_bonus', default: 120 },
-                { id: 'specialty_trial', default: 520 },
-                { id: 'club_benefit', default: 50 },
-                { id: 'casual_game', default: 150 },
-                { id: 'garden_commission', default: 50 },
-                { id: 'match_2v2', default: 640 },
-                { id: 'match_3v3', default: 560 }
-            ]
-        };
-
-        function calculateDailyIncome() {
-            let totalDaily = 0;
-
-            // Daily sources
-            incomeSources.daily.forEach(source => {
-                const checkbox = document.getElementById(source.id);
-                const valueInput = document.getElementById(source.id + '_value');
-                const display = document.getElementById(source.id + '_display');
-                
-                valueInput.disabled = !checkbox.checked;
-                
-                if (checkbox.checked) {
-                    const value = parseInt(valueInput.value) || 0;
-                    totalDaily += value;
-                    display.textContent = value;
-                } else {
-                    display.textContent = '0';
-                }
-            });
-
-            // Weekly sources (convert to daily average)
-            incomeSources.weekly.forEach(source => {
-                const checkbox = document.getElementById(source.id);
-                const valueInput = document.getElementById(source.id + '_value');
-                const display = document.getElementById(source.id + '_display');
-                
-                valueInput.disabled = !checkbox.checked;
-                
-                if (checkbox.checked) {
-                    const weeklyValue = parseInt(valueInput.value) || 0;
-                    let dailyValue;
-                    
-                    // Special handling for match streaks (biweekly with 1 week gap)
-                    if (source.id === 'match_2v2' || source.id === 'match_3v3') {
-                        // Biweekly: get reward once every 2 weeks = value / 14
-                        dailyValue = weeklyValue / 14;
-                    } else {
-                        // Regular weekly: value / 7
-                        dailyValue = weeklyValue / 7;
-                    }
-                    
-                    totalDaily += dailyValue;
-                    display.textContent = dailyValue.toFixed(1);
-                } else {
-                    display.textContent = '0';
-                }
-            });
-
-            // Update summary displays
-            const roundedDaily = Math.round(totalDaily);
-            document.getElementById('total_daily').textContent = roundedDaily;
-            document.getElementById('total_weekly').textContent = Math.round(totalDaily * 7);
-            document.getElementById('total_monthly').textContent = Math.round(totalDaily * 30);
-            document.getElementById('headerDailyIncome').textContent = roundedDaily;
-
-            return roundedDaily;
-        }
-
-        // Add event listeners for income calculator
-        function initIncomeCalculator() {
-            [...incomeSources.daily, ...incomeSources.weekly].forEach(source => {
-                const checkbox = document.getElementById(source.id);
-                const valueInput = document.getElementById(source.id + '_value');
-                
-                checkbox.addEventListener('change', calculateDailyIncome);
-                valueInput.addEventListener('input', calculateDailyIncome);
-            });
-
-            // Initial calculation
-            calculateDailyIncome();
-        }
-
-        function getBannerTag(name) {
-            return name.includes("Rebanner") ? "rebanner" : "new";
-        }
-
-        function isBannerExpired(endDate) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const end = new Date(endDate);
-            end.setHours(0, 0, 0, 0);
-            return end < today;
-        }
-
-        function renderBanners() {
-            const activeBannersDiv = document.getElementById('activeBanners');
-            const expiredBannersDiv = document.getElementById('expiredBanners');
-            const expiredCountSpan = document.getElementById('expiredCount');
-            
-            activeBannersDiv.innerHTML = '';
-            expiredBannersDiv.innerHTML = '';
-            
-            let expiredCount = 0;
-
-            BANNERS.forEach((banner, index) => {
-                const [name, type, startDate, endDate] = banner;
-                const tag = getBannerTag(name);
-                const isExpired = isBannerExpired(endDate);
-                
-                if (isExpired) {
-                    expiredCount++;
-                }
-                
-                const item = document.createElement('div');
-                item.className = 'banner-item';
-                item.innerHTML = `
-                    <input type="checkbox" id="banner${index}" data-index="${index}">
-                    <div class="banner-info">
-                        <div class="banner-name">
-                            ${name}
-                            <span class="banner-type type-${type.toLowerCase()}">${type}</span>
-                            <span class="banner-tag tag-${tag}">${tag === 'new' ? 'NEW RELEASE' : 'REBANNER'}</span>
-                        </div>
-                        <div class="banner-date">${startDate} to ${endDate}</div>
-                    </div>
-                    <div class="banner-copies">
-                        <label>Copies:</label>
-                        <input type="number" id="copies${index}" value="1" min="1" max="10">
-                    </div>
-                `;
-                
-                if (isExpired) {
-                    expiredBannersDiv.appendChild(item);
-                } else {
-                    activeBannersDiv.appendChild(item);
-                }
-            });
-            
-            expiredCountSpan.textContent = expiredCount;
-            
-            const expiredHeader = document.getElementById('expiredHeader');
-            if (expiredCount === 0) {
-                expiredHeader.style.display = 'none';
-            }
-        }
-
-        function toggleIncomeCalculator() {
-            const content = document.getElementById('incomeCalculatorContent');
-            const toggleIcon = document.getElementById('incomeToggleIcon');
-            
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                toggleIcon.classList.add('expanded');
-            } else {
-                content.style.display = 'none';
-                toggleIcon.classList.remove('expanded');
-            }
-        }
-
-        function toggleExpiredBanners() {
-            const expiredBannersDiv = document.getElementById('expiredBanners');
-            const toggleIcon = document.getElementById('toggleIcon');
-            
-            expiredBannersDiv.classList.toggle('show');
-            toggleIcon.classList.toggle('expanded');
-        }
-
-        async function runSimulation() {
-            const errorDiv = document.getElementById('error');
-            const loadingDiv = document.getElementById('loading');
-            const resultsDiv = document.getElementById('results');
-            const button = document.getElementById('runSimulation');
-
-            errorDiv.classList.remove('show');
-            resultsDiv.classList.remove('show');
-
-            const selectedBanners = [];
-            BANNERS.forEach((banner, index) => {
-                const checkbox = document.getElementById(`banner${index}`);
-                const copiesInput = document.getElementById(`copies${index}`);
-                if (checkbox.checked) {
-                    selectedBanners.push({
-                        name: banner[0],
-                        copies: parseInt(copiesInput.value)
-                    });
-                }
-            });
-
-            if (selectedBanners.length === 0) {
-                errorDiv.textContent = 'Please select at least one banner!';
-                errorDiv.classList.add('show');
-                return;
-            }
-
-            const dailyIncome = calculateDailyIncome();
-
-            const data = {
-                diamonds: parseInt(document.getElementById('diamonds').value),
-                ur_tickets: parseInt(document.getElementById('urTickets').value),
-                sp_tickets: parseInt(document.getElementById('spTickets').value),
-                ur_pity: parseInt(document.getElementById('urPity').value),
-                sp_pity: parseInt(document.getElementById('spPity').value),
-                free_ur: parseInt(document.getElementById('freeUR').value),
-                free_sp: parseInt(document.getElementById('freeSP').value),
-                daily_income: dailyIncome,
-                num_sims: parseInt(document.getElementById('numSims').value),
-                targeted_banners: selectedBanners
-            };
-
-            loadingDiv.classList.add('show');
-            button.disabled = true;
-
-            try {
-                const response = await fetch('/simulate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Simulation failed');
-                }
-
-                const results = await response.json();
-                displayResults(results);
-            } catch (error) {
-                errorDiv.textContent = `Error: ${error.message}. Check browser console for details.`;
-                errorDiv.classList.add('show');
-            } finally {
-                loadingDiv.classList.remove('show');
-                button.disabled = false;
-            }
-        }
-
-        function displayResults(data) {
-            const resultsDiv = document.getElementById('results');
-            
-            let html = `
-                <div class="overall-stats">
-                    <h2>Overall Success Rate</h2>
-                    <div class="success-rate">${data.success_rate.toFixed(2)}%</div>
-                    <p>Based on ${data.total_simulations.toLocaleString()} simulations</p>
-                </div>
-            `;
-
-            const bannerNames = Object.keys(data.banner_statistics);
-            const sortedBanners = bannerNames.sort((a, b) => {
-                const dateA = new Date(data.banner_statistics[a].start_date);
-                const dateB = new Date(data.banner_statistics[b].start_date);
-                return dateA - dateB;
-            });
-
-            sortedBanners.forEach(bannerName => {
-                const stats = data.banner_statistics[bannerName];
-                const tag = getBannerTag(bannerName);
-                
-                html += `
-                    <div class="banner-result">
-                        <h3>
-                            ${bannerName}
-                            <span class="banner-tag tag-${tag}">${tag === 'new' ? 'NEW' : 'REBANNER'}</span>
-                        </h3>
-                        <div class="banner-result-date">
-                            ${stats.start_date} to ${stats.end_date} (${stats.duration_days} days)
-                        </div>
-                        
-                        <div class="resources-gained">
-                            <strong>Resources Gained Since Last Banner:</strong>
-                            <div class="resources-gained-grid">
-                                <div>💎 Total Diamonds: <strong>${stats.total_diamonds_gained.toLocaleString()}</strong></div>
-                                <div>🎟️ Free UR Tickets: <strong>${stats.free_ur_tickets_gained}</strong></div>
-                                <div>🎟️ Free SP Tickets: <strong>${stats.free_sp_tickets_gained}</strong></div>
-                            </div>
-                            <div class="resources-gained-grid">
-                                <div>🎁 Milestone Tickets (Avg): <strong>${stats.milestone_tickets_gained.toFixed(1)}</strong></div>
-                                <div>🧬 Milestone Copies (Avg): <strong>${(stats.milestone_copies_rate ?? 0).toFixed(2)}</strong></div>
-                                <div></div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-grid">
-                            <div class="stat-item">
-                                <div class="stat-label">Success Rate</div>
-                                <div class="stat-value">${stats.success_rate.toFixed(2)}%</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Average Pulls</div>
-                                <div class="stat-value">${stats.avg_pulls.toFixed(1)}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Median Pulls</div>
-                                <div class="stat-value">${stats.median_pulls.toFixed(1)}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Average Pulled Copies</div>
-                                <div class="stat-value">${(stats.avg_base_copies ?? 0).toFixed(1)}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Avg Diamonds Spent</div>
-                                <div class="stat-value">${stats.avg_diamonds.toFixed(0).toLocaleString()}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Median Diamonds Spent</div>
-                                <div class="stat-value">${stats.median_diamonds.toFixed(0).toLocaleString()}</div>
-                            </div>
-                        </div>
-
-                        <div class="remaining-resources">
-                            <h4>Remaining Resources After This Banner</h4>
-                            <div class="resource-row">
-                                <div class="resource-item">
-                                    <div class="resource-label">Avg Diamonds</div>
-                                    <div class="resource-value">${stats.avg_remaining_diamonds.toFixed(0).toLocaleString()}</div>
-                                </div>
-                                <div class="resource-item">
-                                    <div class="resource-label">Median Diamonds</div>
-                                    <div class="resource-value">${stats.median_remaining_diamonds.toFixed(0).toLocaleString()}</div>
-                                </div>
-                                <div class="resource-item">
-                                    <div class="resource-label">Avg UR Tickets</div>
-                                    <div class="resource-value">${stats.avg_remaining_ur_tickets.toFixed(1)}</div>
-                                </div>
-                                <div class="resource-item">
-                                    <div class="resource-label">Avg SP Tickets</div>
-                                    <div class="resource-value">${stats.avg_remaining_sp_tickets.toFixed(1)}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            resultsDiv.innerHTML = html;
-            resultsDiv.classList.add('show');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initIncomeCalculator();
-            renderBanners();
-            document.getElementById('runSimulation').addEventListener('click', runSimulation);
-            document.getElementById('expiredHeader').addEventListener('click', toggleExpiredBanners);
-            document.getElementById('incomeCalcHeader').addEventListener('click', toggleIncomeCalculator);
-        });
-    </script>
-</body>
-</html><meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haikyuu Fly High Gacha Simulator</title>
     <style>
@@ -663,6 +258,7 @@
             border-radius: 5px;
             border: 2px solid transparent;
             transition: all 0.3s;
+            gap: 12px;
         }
 
         .banner-item:hover {
@@ -673,8 +269,18 @@
         .banner-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
-            margin-right: 15px;
             cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .banner-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            flex-shrink: 0;
         }
 
         .banner-info {
@@ -1025,7 +631,13 @@
             }
 
             .banner-item input[type="checkbox"] {
-                margin-right: 0;
+                align-self: flex-start;
+            }
+
+            .banner-image {
+                width: 100%;
+                height: 150px;
+                align-self: center;
             }
 
             .banner-copies {
@@ -1091,6 +703,11 @@
                 display: block;
                 margin-left: 0;
                 margin-top: 5px;
+            }
+
+            .banner-image {
+                width: 100%;
+                height: 120px;
             }
         }
     </style>
@@ -1314,3 +931,421 @@
             <div class="results" id="results"></div>
         </div>
     </div>
+
+    <script>
+        // Banner data
+        const BANNERS = [
+            ["Hinata SP Banner", "SP", "2025-12-24", "2026-01-06"],
+            ["Atsumu UR Rebanner", "UR", "2025-12-31", "2026-01-13"],
+            ["Kenma SP Banner", "SP", "2026-01-07", "2026-01-20"],
+            ["Osamu UR Rebanner", "UR", "2026-01-14", "2026-01-27"],
+            ["Nishinoya SP Banner", "SP", "2026-01-21", "2026-02-03"],
+            ["Hoshiumi UR Rebanner", "UR", "2026-01-28", "2026-02-10"],
+            ["Sugawara SP Banner", "SP", "2026-02-04", "2026-02-17"],
+            ["Hirugami UR Rebanner", "UR", "2026-02-11", "2026-02-24"],
+            ["Bokuto SP Banner", "SP", "2026-02-18", "2026-03-03"],
+            ["Sakusa UR Rebanner", "UR", "2026-02-25", "2026-03-10"],
+            ["Akaashi SP Banner", "SP", "2026-03-04", "2026-03-17"],
+            ["Komori UR Rebanner", "UR", "2026-03-11", "2026-03-24"],
+            ["Aone SP Banner", "SP", "2026-03-18", "2026-03-31"],
+            ["Kageyama UR Rebanner", "UR", "2026-03-25", "2026-04-07"],
+            ["Tsukishima SP Banner", "SP", "2026-04-01", "2026-04-14"],
+            ["Hinata SP Rebanner", "SP", "2026-04-08", "2026-04-21"],
+            ["Kuroo SP Banner", "SP", "2026-04-15", "2026-04-28"],
+            ["Kenma SP Rebanner", "SP", "2026-04-22", "2026-05-05"],
+            ["Kunimi SP Banner", "SP", "2026-04-29", "2026-05-12"],
+            ["Nishinoya SP Rebanner", "SP", "2026-05-06", "2026-05-19"],
+            ["Koganegawa SP Banner", "SP", "2026-05-13", "2026-05-26"],
+            ["Sugawara SP Rebanner", "SP", "2026-05-20", "2026-06-02"],
+            ["Oikawa SP Banner", "SP", "2026-05-27", "2026-06-09"],
+            ["Bokuto SP Rebanner", "SP", "2026-06-03", "2026-06-16"],
+            ["Iwaizumi SP Banner", "SP", "2026-06-10", "2026-06-23"],
+            ["Akaashi SP Rebanner", "SP", "2026-06-17", "2026-06-30"],
+            ["Ushijima SP Banner", "SP", "2026-06-24", "2026-07-07"],
+            ["Ginjima SP Banner", "SP", "2026-07-01", "2026-07-14"],
+            ["Tendo SP Banner", "SP", "2026-07-08", "2026-07-21"],
+            ["Aone SP Rebanner", "SP", "2026-07-15", "2026-07-28"],
+            ["Atsumu SP Banner", "SP", "2026-07-22", "2026-08-04"],
+            ["Tsukishima SP Rebanner", "SP", "2026-07-29", "2026-08-11"],
+            ["Osamu SP Banner", "SP", "2026-08-05", "2026-08-18"],
+            ["Kuroo SP Rebanner", "SP", "2026-08-12", "2026-08-25"],
+            ["Hoshiumi SP Banner", "SP", "2026-08-19", "2026-09-01"],
+            ["Kunimi SP Rebanner", "SP", "2026-08-26", "2026-09-08"],
+            ["Hirugami SP Banner", "SP", "2026-09-02", "2026-09-15"],
+            ["Koganegawa SP Rebanner", "SP", "2026-09-09", "2026-09-22"]
+        ];
+
+        // Income sources configuration
+        const incomeSources = {
+            daily: [
+                { id: 'daily_mission', default: 60 },
+                { id: 'training_program', default: 80 },
+                { id: 'exercise', default: 20 },
+                { id: 'quiz', default: 10 },
+                { id: 'peak_challenge', default: 15 },
+                { id: 'peak_ranking', default: 10 },
+                { id: 'monthly_pass', default: 90 },
+                { id: 'premium_pass', default: 100 }
+            ],
+            weekly: [
+                { id: 'weekly_mission', default: 100 },
+                { id: 'weekend_bonus', default: 120 },
+                { id: 'specialty_trial', default: 520 },
+                { id: 'club_benefit', default: 50 },
+                { id: 'casual_game', default: 150 },
+                { id: 'garden_commission', default: 50 },
+                { id: 'match_2v2', default: 640 },
+                { id: 'match_3v3', default: 560 }
+            ]
+        };
+
+        function calculateDailyIncome() {
+            let totalDaily = 0;
+
+            // Daily sources
+            incomeSources.daily.forEach(source => {
+                const checkbox = document.getElementById(source.id);
+                const valueInput = document.getElementById(source.id + '_value');
+                const display = document.getElementById(source.id + '_display');
+                
+                valueInput.disabled = !checkbox.checked;
+                
+                if (checkbox.checked) {
+                    const value = parseInt(valueInput.value) || 0;
+                    totalDaily += value;
+                    display.textContent = value;
+                } else {
+                    display.textContent = '0';
+                }
+            });
+
+            // Weekly sources (convert to daily average)
+            incomeSources.weekly.forEach(source => {
+                const checkbox = document.getElementById(source.id);
+                const valueInput = document.getElementById(source.id + '_value');
+                const display = document.getElementById(source.id + '_display');
+                
+                valueInput.disabled = !checkbox.checked;
+                
+                if (checkbox.checked) {
+                    const weeklyValue = parseInt(valueInput.value) || 0;
+                    let dailyValue;
+                    
+                    // Special handling for match streaks (biweekly with 1 week gap)
+                    if (source.id === 'match_2v2' || source.id === 'match_3v3') {
+                        // Biweekly: get reward once every 2 weeks = value / 14
+                        dailyValue = weeklyValue / 14;
+                    } else {
+                        // Regular weekly: value / 7
+                        dailyValue = weeklyValue / 7;
+                    }
+                    
+                    totalDaily += dailyValue;
+                    display.textContent = dailyValue.toFixed(1);
+                } else {
+                    display.textContent = '0';
+                }
+            });
+
+            // Update summary displays
+            const roundedDaily = Math.round(totalDaily);
+            document.getElementById('total_daily').textContent = roundedDaily;
+            document.getElementById('total_weekly').textContent = Math.round(totalDaily * 7);
+            document.getElementById('total_monthly').textContent = Math.round(totalDaily * 30);
+            document.getElementById('headerDailyIncome').textContent = roundedDaily;
+
+            return roundedDaily;
+        }
+
+        // Add event listeners for income calculator
+        function initIncomeCalculator() {
+            [...incomeSources.daily, ...incomeSources.weekly].forEach(source => {
+                const checkbox = document.getElementById(source.id);
+                const valueInput = document.getElementById(source.id + '_value');
+                
+                checkbox.addEventListener('change', calculateDailyIncome);
+                valueInput.addEventListener('input', calculateDailyIncome);
+            });
+
+            // Initial calculation
+            calculateDailyIncome();
+        }
+
+        function getBannerTag(name) {
+            return name.includes("Rebanner") ? "rebanner" : "new";
+        }
+
+        function isBannerExpired(endDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const end = new Date(endDate);
+            end.setHours(0, 0, 0, 0);
+            return end < today;
+        }
+
+        function getBannerImage(name, type) {
+            // Extract character name from banner name
+            const characterName = name.split(' ')[0].toLowerCase();
+            const bannerType = type.toUpperCase();
+            const imagePath = `/assets/${characterName}${bannerType}.png`;
+            console.log(`Loading image for "${name}": ${imagePath}`); // Debug log
+            return imagePath;
+        }
+
+        function renderBanners() {
+            const activeBannersDiv = document.getElementById('activeBanners');
+            const expiredBannersDiv = document.getElementById('expiredBanners');
+            const expiredCountSpan = document.getElementById('expiredCount');
+            
+            activeBannersDiv.innerHTML = '';
+            expiredBannersDiv.innerHTML = '';
+            
+            let expiredCount = 0;
+
+            BANNERS.forEach((banner, index) => {
+                const [name, type, startDate, endDate] = banner;
+                const tag = getBannerTag(name);
+                const isExpired = isBannerExpired(endDate);
+                const imagePath = getBannerImage(name, type);
+                
+                if (isExpired) {
+                    expiredCount++;
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'banner-item';
+                item.innerHTML = `
+                    <input type="checkbox" id="banner${index}" data-index="${index}">
+                    <img src="${imagePath}" alt="${name}" class="banner-image" onerror="this.style.display='none'">
+                    <div class="banner-info">
+                        <div class="banner-name">
+                            ${name}
+                            <span class="banner-type type-${type.toLowerCase()}">${type}</span>
+                            <span class="banner-tag tag-${tag}">${tag === 'new' ? 'NEW RELEASE' : 'REBANNER'}</span>
+                        </div>
+                        <div class="banner-date">${startDate} to ${endDate}</div>
+                    </div>
+                    <div class="banner-copies">
+                        <label>Copies:</label>
+                        <input type="number" id="copies${index}" value="1" min="1" max="10">
+                    </div>
+                `;
+                
+                if (isExpired) {
+                    expiredBannersDiv.appendChild(item);
+                } else {
+                    activeBannersDiv.appendChild(item);
+                }
+            });
+            
+            expiredCountSpan.textContent = expiredCount;
+            
+            const expiredHeader = document.getElementById('expiredHeader');
+            if (expiredCount === 0) {
+                expiredHeader.style.display = 'none';
+            }
+        }
+
+        function toggleIncomeCalculator() {
+            const content = document.getElementById('incomeCalculatorContent');
+            const toggleIcon = document.getElementById('incomeToggleIcon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggleIcon.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                toggleIcon.classList.remove('expanded');
+            }
+        }
+
+        function toggleExpiredBanners() {
+            const expiredBannersDiv = document.getElementById('expiredBanners');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            expiredBannersDiv.classList.toggle('show');
+            toggleIcon.classList.toggle('expanded');
+        }
+
+        async function runSimulation() {
+            const errorDiv = document.getElementById('error');
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            const button = document.getElementById('runSimulation');
+
+            errorDiv.classList.remove('show');
+            resultsDiv.classList.remove('show');
+
+            const selectedBanners = [];
+            BANNERS.forEach((banner, index) => {
+                const checkbox = document.getElementById(`banner${index}`);
+                const copiesInput = document.getElementById(`copies${index}`);
+                if (checkbox.checked) {
+                    selectedBanners.push({
+                        name: banner[0],
+                        copies: parseInt(copiesInput.value)
+                    });
+                }
+            });
+
+            if (selectedBanners.length === 0) {
+                errorDiv.textContent = 'Please select at least one banner!';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            const dailyIncome = calculateDailyIncome();
+
+            const data = {
+                diamonds: parseInt(document.getElementById('diamonds').value),
+                ur_tickets: parseInt(document.getElementById('urTickets').value),
+                sp_tickets: parseInt(document.getElementById('spTickets').value),
+                ur_pity: parseInt(document.getElementById('urPity').value),
+                sp_pity: parseInt(document.getElementById('spPity').value),
+                free_ur: parseInt(document.getElementById('freeUR').value),
+                free_sp: parseInt(document.getElementById('freeSP').value),
+                daily_income: dailyIncome,
+                num_sims: parseInt(document.getElementById('numSims').value),
+                targeted_banners: selectedBanners
+            };
+
+            loadingDiv.classList.add('show');
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/simulate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Simulation failed');
+                }
+
+                const results = await response.json();
+                displayResults(results);
+            } catch (error) {
+                errorDiv.textContent = `Error: ${error.message}. Check browser console for details.`;
+                errorDiv.classList.add('show');
+            } finally {
+                loadingDiv.classList.remove('show');
+                button.disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            let html = `
+                <div class="overall-stats">
+                    <h2>Overall Success Rate</h2>
+                    <div class="success-rate">${data.success_rate.toFixed(2)}%</div>
+                    <p>Based on ${data.total_simulations.toLocaleString()} simulations</p>
+                </div>
+            `;
+
+            const bannerNames = Object.keys(data.banner_statistics);
+            const sortedBanners = bannerNames.sort((a, b) => {
+                const dateA = new Date(data.banner_statistics[a].start_date);
+                const dateB = new Date(data.banner_statistics[b].start_date);
+                return dateA - dateB;
+            });
+
+            sortedBanners.forEach(bannerName => {
+                const stats = data.banner_statistics[bannerName];
+                const tag = getBannerTag(bannerName);
+                
+                html += `
+                    <div class="banner-result">
+                        <h3>
+                            ${bannerName}
+                            <span class="banner-tag tag-${tag}">${tag === 'new' ? 'NEW' : 'REBANNER'}</span>
+                        </h3>
+                        <div class="banner-result-date">
+                            ${stats.start_date} to ${stats.end_date} (${stats.duration_days} days)
+                        </div>
+                        
+                        <div class="resources-gained">
+                            <strong>Resources Gained Since Last Banner:</strong>
+                            <div class="resources-gained-grid">
+                                <div>💎 Total Diamonds: <strong>${stats.total_diamonds_gained.toLocaleString()}</strong></div>
+                                <div>🎟️ Free UR Tickets: <strong>${stats.free_ur_tickets_gained}</strong></div>
+                                <div>🎟️ Free SP Tickets: <strong>${stats.free_sp_tickets_gained}</strong></div>
+                            </div>
+                            <div class="resources-gained-grid">
+                                <div>🎁 Milestone Tickets (Avg): <strong>${stats.milestone_tickets_gained.toFixed(1)}</strong></div>
+                                <div>🧬 Milestone Copies (Avg): <strong>${(stats.milestone_copies_rate ?? 0).toFixed(2)}</strong></div>
+                                <div></div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Success Rate</div>
+                                <div class="stat-value">${stats.success_rate.toFixed(2)}%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Average Pulls</div>
+                                <div class="stat-value">${stats.avg_pulls.toFixed(1)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Median Pulls</div>
+                                <div class="stat-value">${stats.median_pulls.toFixed(1)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Average Pulled Copies</div>
+                                <div class="stat-value">${(stats.avg_base_copies ?? 0).toFixed(1)}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Avg Diamonds Spent</div>
+                                <div class="stat-value">${stats.avg_diamonds.toFixed(0).toLocaleString()}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Median Diamonds Spent</div>
+                                <div class="stat-value">${stats.median_diamonds.toFixed(0).toLocaleString()}</div>
+                            </div>
+                        </div>
+
+                        <div class="remaining-resources">
+                            <h4>Remaining Resources After This Banner</h4>
+                            <div class="resource-row">
+                                <div class="resource-item">
+                                    <div class="resource-label">Avg Diamonds</div>
+                                    <div class="resource-value">${stats.avg_remaining_diamonds.toFixed(0).toLocaleString()}</div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-label">Median Diamonds</div>
+                                    <div class="resource-value">${stats.median_remaining_diamonds.toFixed(0).toLocaleString()}</div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-label">Avg UR Tickets</div>
+                                    <div class="resource-value">${stats.avg_remaining_ur_tickets.toFixed(1)}</div>
+                                </div>
+                                <div class="resource-item">
+                                    <div class="resource-label">Avg SP Tickets</div>
+                                    <div class="resource-value">${stats.avg_remaining_sp_tickets.toFixed(1)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+            resultsDiv.classList.add('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initIncomeCalculator();
+            renderBanners();
+            document.getElementById('runSimulation').addEventListener('click', runSimulation);
+            document.getElementById('expiredHeader').addEventListener('click', toggleExpiredBanners);
+            document.getElementById('incomeCalcHeader').addEventListener('click', toggleIncomeCalculator);
+        });
+    </script>
+</body>
+</html>
