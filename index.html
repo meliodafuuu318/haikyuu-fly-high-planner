@@ -286,6 +286,7 @@
 
         .banner-info {
             flex: 1;
+            min-width: 0;
         }
 
         .banner-name {
@@ -626,28 +627,45 @@
             }
 
             .banner-item {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
                 gap: 10px;
             }
 
             .banner-item input[type="checkbox"] {
                 align-self: flex-start;
+                order: 1;
             }
 
             .banner-image {
-                width: 100%;
-                height: 150px;
-                align-self: center;
+                width: 60px;
+                height: 60px;
+                order: 2;
+            }
+
+            .banner-info {
+                flex: 1;
+                min-width: 150px;
+                order: 3;
             }
 
             .banner-copies {
                 margin-left: 0;
-                width: 100%;
+                width: auto;
+                order: 4;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .banner-copies label {
+                margin-bottom: 0;
             }
 
             .banner-copies input {
-                width: 100%;
+                width: 60px;
             }
 
             .stat-grid {
@@ -692,23 +710,30 @@
 
             .banner-name {
                 font-size: 0.9em;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
             }
 
             .banner-type {
-                display: block;
+                display: inline-block;
                 margin-left: 0;
-                margin-top: 5px;
+                margin-top: 0;
             }
 
             .banner-tag {
-                display: block;
+                display: inline-block;
                 margin-left: 0;
-                margin-top: 5px;
+                margin-top: 0;
             }
 
             .banner-image {
-                width: 100%;
-                height: 120px;
+                width: 50px;
+                height: 50px;
+            }
+
+            .banner-info {
+                min-width: 120px;
             }
         }
     </style>
