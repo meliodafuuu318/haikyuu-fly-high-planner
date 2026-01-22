@@ -62,51 +62,36 @@ class GachaSimulator:
         else:
             return False, pity_count + 1
     
-    def check_milestone_rewards(self, pulls_on_banner, tickets_gained, banner_type):
-        """Check and apply milestone rewards"""
-        if pulls_on_banner == 10:
-            tickets_gained += 2
-        elif pulls_on_banner == 50:
-            tickets_gained += 5
-        elif pulls_on_banner == 200:
-            tickets_gained += 1  # This is a copy, handled separately
-        
-        return tickets_gained
-    
-    def simulate_banner(self, diamonds, tickets, pity, free_tickets, target_copies, banner_type):
+    def simulate_banner(self, diamonds, tickets, pity, target_copies, banner_type):
         """Simulate pulling on a single banner until target copies obtained"""
         total_pulls = 0
         pulls_with_diamonds = 0
         pulls_on_this_banner = 0
         copies_obtained = 0
         tickets_used = 0
-        free_tickets_used = 0
         milestone_tickets = 0
         milestone_copies = 0
         
         current_pity = pity
         current_diamonds = diamonds
-        current_tickets = tickets + free_tickets
-        
-        # Use free tickets first
-        available_free = free_tickets
+        current_tickets = tickets
         
         while copies_obtained < target_copies:
-            # Use free tickets first
-            if available_free > 0:
-                available_free -= 1
-                free_tickets_used += 1
-            # Then use regular tickets
-            elif current_tickets > 0:
+            # Check if we have any resources left
+            can_pull_with_ticket = current_tickets > 0
+            can_pull_with_diamonds = current_diamonds >= self.PULL_COST
+            
+            if not can_pull_with_ticket and not can_pull_with_diamonds:
+                # No resources left
+                break
+            
+            # Use tickets first, then diamonds
+            if can_pull_with_ticket:
                 current_tickets -= 1
                 tickets_used += 1
-            # Finally use diamonds
-            elif current_diamonds >= self.PULL_COST:
+            elif can_pull_with_diamonds:
                 current_diamonds -= self.PULL_COST
                 pulls_with_diamonds += 1
-            else:
-                # Not enough resources
-                break
             
             total_pulls += 1
             pulls_on_this_banner += 1
@@ -133,7 +118,6 @@ class GachaSimulator:
             'total_pulls': total_pulls,
             'pulls_with_diamonds': pulls_with_diamonds,
             'tickets_used': tickets_used,
-            'free_tickets_used': free_tickets_used,
             'milestone_tickets': milestone_tickets,
             'milestone_copies': milestone_copies,
             'copies_obtained': copies_obtained,
@@ -257,27 +241,22 @@ class GachaSimulator:
                 total_diamonds_gained = diamonds - diamonds_before_income
                 
                 # Determine which tickets and pity to use
-                # Free tickets only for new releases, not rebanners
                 if banner_type == "UR":
-                    tickets_before = ur_tickets
                     tickets = ur_tickets
                     pity = ur_pity
-                    free_tickets = 0  # Free tickets already added to inventory
                 else:
-                    tickets_before = sp_tickets
                     tickets = sp_tickets
                     pity = sp_pity
-                    free_tickets = 0  # Free tickets already added to inventory
                 
-                # Simulate banner
+                # Simulate banner - now properly uses ALL available resources
                 result = self.simulate_banner(
-                    diamonds, tickets, pity, free_tickets, target_copies, banner_type
+                    diamonds, tickets, pity, target_copies, banner_type
                 )
                 
                 # Update resources
                 diamonds = result['diamonds_remaining']
                 
-                # Calculate milestone tickets gained during pulls
+                # Update tickets and pity based on banner type
                 if banner_type == "UR":
                     ur_tickets = result['tickets_remaining']
                     ur_pity = result['final_pity']
