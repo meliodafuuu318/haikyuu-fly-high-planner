@@ -998,7 +998,14 @@
             ["Hoshiumi SP Banner", "SP", "2026-08-19", "2026-09-01"],
             ["Kunimi SP Rebanner", "SP", "2026-08-26", "2026-09-08"],
             ["Hirugami SP Banner", "SP", "2026-09-02", "2026-09-15"],
-            ["Koganegawa SP Rebanner", "SP", "2026-09-09", "2026-09-22"]
+            ["Koganegawa SP Rebanner", "SP", "2026-09-09", "2026-09-22"],
+            ["Kenma SP 2 Banner", "SP", "2026-09-16", "2026-09-29"],
+            ["Oikawa SP Rebanner", "SP", "2026-09-30", "2026-10-13"],
+            ["Lev SP Banner", "SP", "2026-10-7", "2026-10-20"],
+            ["Iwaizumi SP Rebanner", "SP", "2026-10-14", "2026-10-27"],
+            ["Yamamoto SP Banner", "SP", "2026-10-21", "2026-11-03"],
+            ["Ushijima SP Rebanner", "SP", "2026-10-28", "2026-11-10"],
+            ["Tanaka SP Banner", "SP", "2026-11-04", "2026-11-17"],
         ];
 
         // Income sources configuration
@@ -1111,7 +1118,12 @@
 
         function getBannerImage(name, type) {
             // Extract character name from banner name
-            const characterName = name.split(' ')[0].toLowerCase();
+            const nameSplit = name.split(' ');
+            if (nameSplit[2] !== 'Rebanner' && nameSplit[2] !== 'Banner') {
+                characterName = nameSplit[0].concat(nameSplit[2]).toLowerCase();
+            } else {
+                characterName = nameSplit[0].toLowerCase();
+            }
             const bannerType = type.toUpperCase();
             const imagePath = `/assets/${characterName}${bannerType}.png`;
             console.log(`Loading image for "${name}": ${imagePath}`); // Debug log
